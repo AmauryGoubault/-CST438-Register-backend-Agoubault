@@ -1,5 +1,4 @@
 package com.cst438.domain;
 
-public record StudentDTO(String status) {
-
+public record StudentDTO(int studentId, String name, String email, int statusCode, String status){
 }
