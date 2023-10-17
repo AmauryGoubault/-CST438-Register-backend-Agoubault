@@ -1,88 +1,75 @@
 package com.cst438.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.cst438.domain.Student;
 import com.cst438.domain.StudentDTO;
 import com.cst438.domain.StudentRepository;
-import com.google.common.base.Optional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
+@CrossOrigin (origins = "http://localhost:3000")
 @RestController
-@CrossOrigin
 @RequestMapping("/students")
 public class StudentController {
 
     @Autowired
     private StudentRepository studentRepository;
 
-    /*
-     * add a new student
-     */
-    @PostMapping("")
-    @Transactional
-    public Student addStudent(@RequestBody Student student) {
-        // Check if the student email is unique in the database
-        if (studentRepository.findByEmail(student.getEmail()) == null) {
-            // Set the student status and save to the database
-            student.setStatus("Active");
-            student.setStatusCode(0);
-            studentRepository.save(student);
-            return student;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student with the same email already exists.");
-        }
+    //Listing all students
+    @GetMapping
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok((List<Student>) studentRepository.findAll());
     }
 
-    /*
-     * List all students
-     */
-    @GetMapping("")
-    public List<Student> getAllStudents() {
-        // Convertir l'itérable en liste en utilisant Java Stream API
-        List<Student> studentList = StreamSupport
-                .stream(studentRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
-
-        return studentList;
+    //Adding a new student
+    @PostMapping
+    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
+        Student savedStudent = studentRepository.save(student);
+        return ResponseEntity.ok(savedStudent);
     }
-
-    /*
-     * Update student status
-     */
-    @PutMapping("/{studentId}/status")
+    
+//    -=-=-=-=- old without StudentDTO -=-=-=-=-
+//    //Updating the student
+//    @PutMapping("/{studentId}/status")
+//    public ResponseEntity<Student> updateStudentStatus(@PathVariable("studentId") int studentId, @RequestBody String status) {
+//        Optional<Student> studentOpt = studentRepository.findById(studentId);
+//        if (!studentOpt.isPresent()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        Student student = studentOpt.get();
+//        student.setStatus(status);
+//        studentRepository.save(student);
+//        return ResponseEntity.ok(student);
+//    }
+//    
+  //Updating the student status
+    @PutMapping("/{studentId}")
     public ResponseEntity<Student> updateStudentStatus(@PathVariable("studentId") int studentId, @RequestBody StudentDTO studentDTO) {
-        java.util.Optional<Student> studentOpt = studentRepository.findById(studentId);
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
         if (!studentOpt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         Student student = studentOpt.get();
         student.setStatus(studentDTO.status());
+        student.setName(studentDTO.name());
+        student.setEmail(studentDTO.email());
         studentRepository.save(student);
         return ResponseEntity.ok(student);
     }
 
-    /*
-     * Delete a student
-     */
-    @DeleteMapping("/{student_id}")
-    @Transactional
-    public void deleteStudent(@PathVariable int student_id) {
-        Student student = studentRepository.findById(student_id).orElse(null);
-        if (student != null) {
-            // You can add more logic here as needed
-            studentRepository.delete(student);
-        } else {
-        	throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
 
+
+    //Deleting a student
+    @DeleteMapping("/{studentId}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable("studentId") int studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            return ResponseEntity.notFound().build();
         }
+        studentRepository.deleteById(studentId);
+        return ResponseEntity.noContent().build();
     }
 }

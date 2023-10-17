@@ -20,4 +20,10 @@ insert into enrollment values
 (3, 1, 2020, 'Fall', 31045, null),
 (4, 2, 2020, 'Fall', 31045, null),
 (5, 3, 2020, 'Fall', 31045, null);
--- test
+
+-- for assigment 4
+insert into course values 
+(2021,'Fall',40443,1,'Sample Course Title','MoWe 4:00PM - 5:50PM','506','104','dwisneski@csumb.edu', '2021-08-24', '2021-12-13');
+
+insert into enrollment values 
+(6, 3, 2021, 'Fall', 40443, NULL);
