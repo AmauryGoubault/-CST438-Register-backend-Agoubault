@@ -19,6 +19,9 @@ CREATE TABLE student (
   email varchar(255) NOT NULL UNIQUE,
   status varchar(255) DEFAULT NULL,
   status_code int  NOT NULL,
+  password varchar(255) NOT NULL,
+  role varchar(255) NOT NULL,
+
   PRIMARY KEY (student_id)
 );
 

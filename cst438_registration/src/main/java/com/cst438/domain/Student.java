@@ -15,6 +15,9 @@ public class Student {
 	private String email;
 	private int statusCode;
 	private String status;
+	private String password;
+	private String role;
+	
 	
 	public Student() {
 		super();
@@ -26,6 +29,22 @@ public class Student {
 	public void setStudent_id(int student_id) {
 		this.student_id = student_id;
 	}
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public String getName() {
 		return name;
 	}

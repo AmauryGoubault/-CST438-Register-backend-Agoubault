@@ -2,6 +2,7 @@ package com.cst438.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.cst438.domain.Student;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @CrossOrigin (origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/students")
+
 public class StudentController {
 
     @Autowired
@@ -27,7 +29,8 @@ public class StudentController {
 
     //Adding a new student
     @PostMapping
-    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<Student> addStudent(@RequestBody Student student ) {
         Student savedStudent = studentRepository.save(student);
         return ResponseEntity.ok(savedStudent);
     }
@@ -48,6 +51,7 @@ public class StudentController {
 //    
   //Updating the student status
     @PutMapping("/{studentId}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Student> updateStudentStatus(@PathVariable("studentId") int studentId, @RequestBody StudentDTO studentDTO) {
         Optional<Student> studentOpt = studentRepository.findById(studentId);
         if (!studentOpt.isPresent()) {
@@ -65,6 +69,7 @@ public class StudentController {
 
     //Deleting a student
     @DeleteMapping("/{studentId}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Void> deleteStudent(@PathVariable("studentId") int studentId) {
         if (!studentRepository.existsById(studentId)) {
             return ResponseEntity.notFound().build();
